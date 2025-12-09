@@ -269,7 +269,7 @@ with st.sidebar:
     st.markdown("### ⚙️ API Configuration")
     api_url = st.text_input(
         "Backend API URL",
-        value="http://localhost:10000/message",
+        value="https://nss-agent-tester.onrender.com/message",
         help="URL of your backend API"
     )
     st.markdown('</div>', unsafe_allow_html=True)
@@ -485,4 +485,5 @@ st.markdown("""
     <p>🙏 Narayan Seva Sansthan - AI-Powered Chat Assistant</p>
     <p>Powered by Gemini AI | Built with Streamlit</p>
 </div>
+
 """, unsafe_allow_html=True)
