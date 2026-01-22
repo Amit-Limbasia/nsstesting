@@ -69,6 +69,9 @@ if "user_input" not in st.session_state:
 def is_url(text):
     return text.startswith(("http://", "https://"))
 
+def clear_input():
+    st.session_state.user_input = ""
+
 # ===============================
 # Sidebar
 # ===============================
@@ -170,7 +173,8 @@ with col1:
     )
 
 with col2:
-    send = st.button("Send 📤")
+    send = st.button("Send 📤", on_click=clear_input)
+
 
 # ===============================
 # Send Logic
@@ -222,7 +226,7 @@ if send and user_input:
                 })
 
         # 🔥 CLEAR INPUT AFTER SEND
-        st.session_state.user_input = ""
+        
         st.rerun()
 
 # ===============================
@@ -233,3 +237,4 @@ st.markdown(
     "<center><small>🙏 Narayan Seva Sansthan | AI Sadhak | Powered by Gemini & Streamlit</small></center>",
     unsafe_allow_html=True
 )
+
