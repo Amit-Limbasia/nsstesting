@@ -269,9 +269,10 @@ with st.sidebar:
     st.markdown("### ⚙️ API Configuration")
     api_url = st.text_input(
         "Backend API URL",
-        value="https://nss-agent-tester.onrender.com/message",
+        value="https://nss-agent-testing-app.onrender.com/message",
         help="URL of your backend API"
     )
+
     st.markdown('</div>', unsafe_allow_html=True)
     
     # Stats
@@ -304,6 +305,29 @@ st.markdown("""
 <div class="chat-header">
     <h1>🙏 Narayan Seva Sansthan</h1>
     <p>AI Sadhak - Your helpful assistant</p>
+    st.write("🔍 **Current Model:** `gemini-2.0-flash` | ⚙️ **Mode:** `Event-Driven with Local API`")
+
+    with st.expander("ℹ️ System Architecture & Workflow"):
+        st.graphviz_chart('''
+        digraph {
+            rankdir=LR;
+            node [shape=box, style=filled, fillcolor=lightblue fontname="Helvetica"];
+            
+            U [label="User" shape=circle fillcolor=gold];
+            P [label="Perception" fillcolor=lightgreen];
+            Pl [label="Planner" fillcolor=salmon];
+            E [label="Executor" fillcolor=lightyellow];
+            DB [label="Local API / DB" shape=cylinder fillcolor=lightgrey];
+            
+            U -> P [label="Text / Image"];
+            P -> Pl [label="Analysis"];
+            Pl -> E [label="Intent"];
+            E -> DB [label="Fetch / Store"];
+            DB -> E [label="Data"];
+            E -> U [label="Response"];
+        }
+        ''')
+
 </div>
 """, unsafe_allow_html=True)
 
@@ -475,7 +499,7 @@ if send_button and user_input:
                     "content": f"Error: {str(e)}",
                     "timestamp": datetime.now().strftime("%I:%M %p")
                 })
-        
+        st.session_state.user_input = ""
         st.rerun()
 
 # Footer
@@ -487,3 +511,4 @@ st.markdown("""
 </div>
 
 """, unsafe_allow_html=True)
+
