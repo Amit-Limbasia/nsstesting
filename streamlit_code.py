@@ -305,7 +305,8 @@ st.markdown("""
 <div class="chat-header">
     <h1>🙏 Narayan Seva Sansthan</h1>
     <p>AI Sadhak - Your helpful assistant</p>
-    st.write("🔍 **Current Model:** `gemini-2.0-flash` | ⚙️ **Mode:** `Event-Driven with Local API`")
+</div>
+st.write("🔍 **Current Model:** `gemini-2.0-flash` | ⚙️ **Mode:** `Event-Driven with Local API`")
 
     with st.expander("ℹ️ System Architecture & Workflow"):
         st.graphviz_chart('''
@@ -327,8 +328,6 @@ st.markdown("""
             E -> U [label="Response"];
         }
         ''')
-
-</div>
 """, unsafe_allow_html=True)
 
 # Display messages
@@ -511,4 +510,5 @@ st.markdown("""
 </div>
 
 """, unsafe_allow_html=True)
+
 
