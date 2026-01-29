@@ -1,7 +1,10 @@
+
+
 import streamlit as st
 import requests
 from datetime import datetime
 import json
+import uuid
 
 # Page configuration
 st.set_page_config(
@@ -222,6 +225,8 @@ if "donor_name" not in st.session_state:
     st.session_state.donor_name = ""
 if "ng_code" not in st.session_state:
     st.session_state.ng_code = 0
+if "input_counter" not in st.session_state:
+    st.session_state.input_counter = 0
 
 # Helper function to check if string is a URL
 def is_url(text):
@@ -264,16 +269,9 @@ with st.sidebar:
     
     st.markdown('</div>', unsafe_allow_html=True)
     
-    # API Configuration
-    st.markdown('<div class="info-box">', unsafe_allow_html=True)
-    st.markdown("### ⚙️ API Configuration")
-    api_url = st.text_input(
-        "Backend API URL",
-        value="https://nss-agent-tester.onrender.com/message",
-        help="URL of your backend API"
-    )
-    st.markdown('</div>', unsafe_allow_html=True)
-    
+    # Fixed Backend API URL (hidden from UI)
+    api_url = "https://nss-agent-testing-app.onrender.com/message"
+
     # Stats
     st.markdown('<div class="info-box">', unsafe_allow_html=True)
     st.markdown("### 📊 Chat Statistics")
@@ -364,119 +362,132 @@ with chat_container:
             # End bot message bubble
             st.markdown('</div></div>', unsafe_allow_html=True)
 
-# Input area
-st.markdown("---")
-col1, col2 = st.columns([5, 1])
-
-with col1:
-    user_input = st.text_input(
-        "Type your message...",
-        key="user_input",
-        placeholder="Type your message or image URL (https://...)...",
-        label_visibility="collapsed"
-    )
-
-with col2:
-    send_button = st.button("Send 📤", use_container_width=True)
-
-# Handle message sending
-if send_button and user_input:
+# Function to handle message sending
+def send_message(user_input):
+    if not user_input:
+        return
+        
     if not st.session_state.mobile_no:
         st.error("⚠️ Please enter your mobile number in the sidebar first!")
+        return
+    
+    # Check if input is a URL (image)
+    is_image_url = is_url(user_input)
+    
+    # Prepare message content
+    if is_image_url:
+        message_content = "[Image]"
+        message_type = "image"
+        image_url = user_input
     else:
-        # Check if input is a URL (image)
-        is_image_url = is_url(user_input)
-        
-        # Prepare message content
-        if is_image_url:
-            message_content = "[Image]"
-            message_type = "image"
-            image_url = user_input
-        else:
-            message_content = user_input
-            message_type = "text"
-            image_url = None
-        
-        # Add user message
-        user_message = {
-            "role": "user",
-            "content": message_content if is_image_url else user_input,
-            "timestamp": datetime.now().strftime("%I:%M %p")
-        }
-        
-        if image_url:
-            user_message["image_url"] = image_url
-            user_message["has_image"] = True
-        
-        st.session_state.messages.append(user_message)
-        
-        # Show typing indicator
-        with st.spinner("AI Sadhak is typing..."):
-            try:
-                # Prepare API request
-                payload = {
-                    "WA_Auto_Id": None,
-                    "WA_In_Out": "In",
-                    "Account_Code": None,
-                    "WA_Received_At": datetime.now().isoformat(),
-                    "NGCode": st.session_state.ng_code,
-                    "Wa_Name": st.session_state.donor_name,
-                    "MobileNo": st.session_state.mobile_no,
-                    "WA_Msg_To": st.session_state.mobile_no,
-                    "WA_Msg_Text": user_input if not is_image_url else "",
-                    "WA_Msg_Type": message_type,
-                    "Integration_Type": "streamlit",
-                    "WA_Message_Id": None,
-                    "WA_Url": image_url if is_image_url else None,
-                    "Status": "success",
-                    "Donor_Name": st.session_state.donor_name
-                }
-                
-                # Make API call
-                response = requests.post(api_url, json=payload, timeout=90)
-                
-                if response.status_code == 200:
-                    result = response.json()
-                    
-                    # Parse classification
-                    ai_reason = result.get("ai_reason", "")
-                    classification_parts = ai_reason.split("|")
-                    main_class = classification_parts[0] if len(classification_parts) > 0 else ""
-                    sub_class = classification_parts[1] if len(classification_parts) > 1 else ""
-                    
-                    # Add bot response
-                    st.session_state.messages.append({
-                        "role": "assistant",
-                        "content": result.get("ai_response", "Sorry, I couldn't process your request."),
-                        "timestamp": datetime.now().strftime("%I:%M %p"),
-                        "classification": main_class,
-                        "sub_classification": sub_class,
-                        "confidence": "HIGH"
-                    })
-                else:
-                    st.error(f"❌ API Error: {response.status_code}")
-                    st.session_state.messages.append({
-                        "role": "assistant",
-                        "content": "Sorry, I encountered an error. Please try again.",
-                        "timestamp": datetime.now().strftime("%I:%M %p")
-                    })
+        message_content = user_input
+        message_type = "text"
+        image_url = None
+    
+    # Add user message
+    user_message = {
+        "role": "user",
+        "content": message_content if is_image_url else user_input,
+        "timestamp": datetime.now().strftime("%I:%M %p")
+    }
+    
+    if image_url:
+        user_message["image_url"] = image_url
+        user_message["has_image"] = True
+    
+    st.session_state.messages.append(user_message)
+    
+    # Show typing indicator
+    with st.spinner("AI Sadhak is typing..."):
+        try:
+            # Prepare API request
+            payload = {
+                "WA_Auto_Id": 0,
+                "WA_In_Out": "In",
+                "Account_Code": 0,
+                "WA_Received_At": datetime.now().isoformat(),
+                "NGCode": st.session_state.ng_code,
+                "Wa_Name": st.session_state.donor_name,
+                "MobileNo": st.session_state.mobile_no,
+                "WA_Msg_To": st.session_state.mobile_no,
+                "WA_Msg_Text": user_input if not is_image_url else "",
+                "WA_Msg_Type": message_type,
+                "Integration_Type": "streamlit",
+                "WA_Message_Id": str(uuid.uuid4()),
+                "WA_Url": image_url if is_image_url else "",
+                "Status": "success",
+                "Donor_Name": st.session_state.donor_name
+            }
             
-            except requests.exceptions.Timeout:
-                st.error("⏱️ Request timed out. Please try again.")
+            # Make API call
+            response = requests.post(api_url, json=payload, timeout=90)
+            
+            if response.status_code == 200:
+                result = response.json()
+                
+                # Parse classification
+                ai_reason = result.get("ai_reason", "")
+                classification_parts = ai_reason.split("|")
+                main_class = classification_parts[0] if len(classification_parts) > 0 else ""
+                sub_class = classification_parts[1] if len(classification_parts) > 1 else ""
+                
+                # Add bot response
                 st.session_state.messages.append({
                     "role": "assistant",
-                    "content": "Request timed out. Please try again.",
-                    "timestamp": datetime.now().strftime("%I:%M %p")
+                    "content": result.get("ai_response", "Sorry, I couldn't process your request."),
+                    "timestamp": datetime.now().strftime("%I:%M %p"),
+                    "classification": main_class,
+                    "sub_classification": sub_class,
+                    "confidence": "HIGH"
                 })
-            except Exception as e:
-                st.error(f"❌ Error: {str(e)}")
+            else:
+                st.error(f"❌ API Error: {response.status_code}")
                 st.session_state.messages.append({
                     "role": "assistant",
-                    "content": f"Error: {str(e)}",
+                    "content": "Sorry, I encountered an error. Please try again.",
                     "timestamp": datetime.now().strftime("%I:%M %p")
                 })
         
-        st.rerun()
+        except requests.exceptions.Timeout:
+            st.error("⏱️ Request timed out. Please try again.")
+            st.session_state.messages.append({
+                "role": "assistant",
+                "content": "Request timed out. Please try again.",
+                "timestamp": datetime.now().strftime("%I:%M %p")
+            })
+        except Exception as e:
+            st.error(f"❌ Error: {str(e)}")
+            st.session_state.messages.append({
+                "role": "assistant",
+                "content": f"Error: {str(e)}",
+                "timestamp": datetime.now().strftime("%I:%M %p")
+            })
+    
+    # Increment counter to force input clear
+    st.session_state.input_counter += 1
+    st.rerun()
+
+# Input area
+st.markdown("---")
+
+# Create a form to enable Enter key submission
+with st.form(key="message_form", clear_on_submit=True):
+    col1, col2 = st.columns([5, 1])
+    
+    with col1:
+        user_input = st.text_input(
+            "Type your message...",
+            key=f"user_input_{st.session_state.input_counter}",
+            placeholder="Type your message or image URL (https://...)...",
+            label_visibility="collapsed"
+        )
+    
+    with col2:
+        send_button = st.form_submit_button("Send 📤", use_container_width=True)
+    
+    # Handle message sending
+    if send_button and user_input:
+        send_message(user_input)
 
 # Footer
 st.markdown("---")
@@ -485,5 +496,4 @@ st.markdown("""
     <p>🙏 Narayan Seva Sansthan - AI-Powered Chat Assistant</p>
     <p>Powered by Gemini AI | Built with Streamlit</p>
 </div>
-
 """, unsafe_allow_html=True)
