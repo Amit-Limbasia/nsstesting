@@ -1,11 +1,10 @@
+
+
 import streamlit as st
 import requests
 from datetime import datetime
 import json
 import uuid
-import streamlit.components.v1 as components
-import html
-
 
 # Page configuration
 st.set_page_config(
@@ -322,55 +321,46 @@ with chat_container:
         has_image = message.get("has_image", False)
         image_url = message.get("image_url", "")
         
-        safe_content = html.escape(content)
-
         if role == "user":
-            image_html = ""
+            # Start user message bubble
+            st.markdown('<div class="message-container user-message"><div class="message-bubble user-bubble">', unsafe_allow_html=True)
+            
+            # Display image if present
             if has_image and image_url:
-                image_html = f'<img src="{image_url}" class="message-image" />'
-        
-            components.html(
-                f"""
-                <div class="message-container user-message">
-                    <div class="message-bubble user-bubble">
-                        {image_html}
-                        <div class="message-text">{safe_content}</div>
-                        <div class="message-time">{timestamp}</div>
-                    </div>
-                </div>
-                """,
-                height=80,
-            )
-        
+                st.markdown(f'<img src="{image_url}" class="message-image" />', unsafe_allow_html=True)
+            
+            # Display message text using st.write (safe from HTML injection)
+            st.markdown(f'<div class="message-text">', unsafe_allow_html=True)
+            st.write(content)
+            st.markdown('</div>', unsafe_allow_html=True)
+            
+            # Display timestamp
+            st.markdown(f'<div class="message-time">{timestamp}</div>', unsafe_allow_html=True)
+            
+            # End user message bubble
+            st.markdown('</div></div>', unsafe_allow_html=True)
         else:
-            components.html(
-                f"""
-                <div class="message-container bot-message">
-                    <div class="message-bubble bot-bubble">
-                        <div class="message-text">{safe_content}</div>
-                        <div class="message-time">{timestamp}</div>
-                    </div>
-                </div>
-                """,
-                height=100,
-            )
-        
+            # Start bot message bubble
+            st.markdown('<div class="message-container bot-message"><div class="message-bubble bot-bubble">', unsafe_allow_html=True)
+            
+            # Display message text using st.write (safe from HTML injection)
+            st.markdown(f'<div class="message-text">', unsafe_allow_html=True)
+            st.write(content)
+            st.markdown('</div>', unsafe_allow_html=True)
+            
+            # Display timestamp
+            st.markdown(f'<div class="message-time">{timestamp}</div>', unsafe_allow_html=True)
+            
+            # Display classification details
             if classification:
-                st.markdown(
-                    f'<div class="classification-details"><span class="classification-label">📋 Classification:</span>{classification}</div>',
-                    unsafe_allow_html=True
-                )
+                st.markdown(f'<div class="classification-details"><span class="classification-label">📋 Classification:</span>{classification}</div>', unsafe_allow_html=True)
             if sub_classification:
-                st.markdown(
-                    f'<div class="classification-details"><span class="classification-label">📌 Sub-Classification:</span>{sub_classification}</div>',
-                    unsafe_allow_html=True
-                )
+                st.markdown(f'<div class="classification-details"><span class="classification-label">📌 Sub-Classification:</span>{sub_classification}</div>', unsafe_allow_html=True)
             if confidence:
-                st.markdown(
-                    f'<div class="classification-details"><span class="classification-label">✅ Confidence:</span>{confidence}</div>',
-                    unsafe_allow_html=True
-                )
-
+                st.markdown(f'<div class="classification-details"><span class="classification-label">✅ Confidence:</span>{confidence}</div>', unsafe_allow_html=True)
+            
+            # End bot message bubble
+            st.markdown('</div></div>', unsafe_allow_html=True)
 
 # Function to handle message sending
 def send_message(user_input):
@@ -507,6 +497,3 @@ st.markdown("""
     <p>Powered by Gemini AI | Built with Streamlit</p>
 </div>
 """, unsafe_allow_html=True)
-
-
-
