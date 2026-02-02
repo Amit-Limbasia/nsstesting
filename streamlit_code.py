@@ -1,11 +1,11 @@
-
-
 import streamlit as st
 import requests
 from datetime import datetime
 import json
 import uuid
+import streamlit.components.v1 as components
 import html
+
 
 # Page configuration
 st.set_page_config(
@@ -322,35 +322,37 @@ with chat_container:
         has_image = message.get("has_image", False)
         image_url = message.get("image_url", "")
         
+        safe_content = html.escape(content)
+
         if role == "user":
             image_html = ""
             if has_image and image_url:
                 image_html = f'<img src="{image_url}" class="message-image" />'
         
-            safe_content = html.escape(content)
-        
-            st.markdown(
-        f"""<div class="message-container user-message">
-        <div class="message-bubble user-bubble">
-        {image_html}
-        <div class="message-text">{safe_content}</div>
-        <div class="message-time">{timestamp}</div>
-        </div>
-        </div>""",
-                unsafe_allow_html=True
+            components.html(
+                f"""
+                <div class="message-container user-message">
+                    <div class="message-bubble user-bubble">
+                        {image_html}
+                        <div class="message-text">{safe_content}</div>
+                        <div class="message-time">{timestamp}</div>
+                    </div>
+                </div>
+                """,
+                height=80,
             )
         
         else:
-            safe_content = html.escape(content)
-        
-            st.markdown(
-        f"""<div class="message-container bot-message">
-        <div class="message-bubble bot-bubble">
-        <div class="message-text">{safe_content}</div>
-        <div class="message-time">{timestamp}</div>
-        </div>
-        </div>""",
-                unsafe_allow_html=True
+            components.html(
+                f"""
+                <div class="message-container bot-message">
+                    <div class="message-bubble bot-bubble">
+                        <div class="message-text">{safe_content}</div>
+                        <div class="message-time">{timestamp}</div>
+                    </div>
+                </div>
+                """,
+                height=100,
             )
         
             if classification:
@@ -505,5 +507,6 @@ st.markdown("""
     <p>Powered by Gemini AI | Built with Streamlit</p>
 </div>
 """, unsafe_allow_html=True)
+
 
 
