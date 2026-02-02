@@ -17,201 +17,57 @@ st.set_page_config(
 # Custom CSS for WhatsApp-like UI
 st.markdown("""
 <style>
-    /* Main container */
     .main {
         background-color: #e5ddd5;
     }
     
-    /* Chat header */
     .chat-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #128C7E 0%, #075E54 100%);
         color: white;
-        padding: 20px;
-        border-radius: 15px 15px 0 0;
-        margin-bottom: 20px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-    
-    .chat-header h1 {
-        margin: 0;
-        font-size: 24px;
-        font-weight: 600;
-    }
-    
-    .chat-header p {
-        margin: 5px 0 0 0;
-        opacity: 0.9;
-        font-size: 14px;
-    }
-    
-    /* Message container */
-    .message-container {
-        display: flex;
-        margin: 15px 0;
-        animation: fadeIn 0.3s ease-in;
-    }
-    
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .user-message {
-        justify-content: flex-end;
-    }
-    
-    .bot-message {
-        justify-content: flex-start;
-    }
-    
-    /* Message bubble */
-    .message-bubble {
-        max-width: 70%;
-        padding: 12px 16px;
-        border-radius: 18px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        position: relative;
-    }
-    
-    .user-bubble {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border-bottom-right-radius: 4px;
-        margin-left: auto;
-    }
-    
-    .bot-bubble {
-        background: white;
-        color: #303030;
-        border-bottom-left-radius: 4px;
-    }
-    
-    .message-text {
-        font-size: 15px;
-        line-height: 1.5;
-        margin-bottom: 5px;
-        word-wrap: break-word;
-        white-space: pre-wrap;
-    }
-    
-    .message-time {
-        font-size: 11px;
-        opacity: 0.7;
-        text-align: right;
-        margin-top: 5px;
-    }
-    
-    /* Classification badge */
-    .classification-badge {
-        display: inline-block;
-        background: rgba(255, 255, 255, 0.2);
-        padding: 4px 10px;
-        border-radius: 12px;
-        font-size: 11px;
-        margin-top: 8px;
-        backdrop-filter: blur(10px);
-    }
-    
-    .bot-classification {
-        background: #f0f0f0;
-        color: #666;
-    }
-    
-    /* Classification details */
-    .classification-details {
-        font-size: 12px;
-        margin-top: 8px;
-        padding: 8px 12px;
-        background: rgba(0,0,0,0.05);
+        padding: 15px 20px;
         border-radius: 10px;
-        border-left: 3px solid #667eea;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        display: flex;
+        align-items: center;
+        gap: 15px;
     }
     
-    .classification-label {
-        font-weight: 600;
-        color: #667eea;
-        margin-right: 5px;
+    .chat-header-avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
     }
     
-    /* Message image */
-    .message-image {
-        max-width: 100%;
-        max-height: 400px;
-        border-radius: 12px;
-        margin-bottom: 8px;
-        display: block;
+    .chat-header-info h1 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 500;
     }
     
-    /* Input area */
-    .stTextInput > div > div > input {
-        border-radius: 25px;
-        border: 2px solid #667eea;
-        padding: 12px 20px;
-        font-size: 15px;
+    .chat-header-info p {
+        margin: 2px 0 0 0;
+        opacity: 0.85;
+        font-size: 13px;
     }
     
     .stButton > button {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: #128C7E;
         color: white;
         border-radius: 25px;
-        padding: 12px 30px;
+        padding: 10px 25px;
         border: none;
-        font-weight: 600;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        transition: all 0.3s ease;
+        font-weight: 500;
+        transition: all 0.2s ease;
     }
     
     .stButton > button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-    }
-    
-    /* Sidebar */
-    .css-1d391kg {
-        background: #f8f9fa;
-    }
-    
-    /* Info boxes */
-    .info-box {
-        background: white;
-        padding: 15px;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        margin-bottom: 15px;
-    }
-    
-    .info-box h3 {
-        color: #667eea;
-        font-size: 16px;
-        margin-bottom: 10px;
-    }
-    
-    /* Typing indicator */
-    .typing-indicator {
-        display: flex;
-        gap: 4px;
-        padding: 10px;
-    }
-    
-    .typing-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: #667eea;
-        animation: typing 1.4s infinite;
-    }
-    
-    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-    
-    @keyframes typing {
-        0%, 60%, 100% { transform: translateY(0); }
-        30% { transform: translateY(-10px); }
-    }
-    
-    /* Empty div styles */
-    .empty-start, .empty-end {
-        height: 0;
+        background: #075E54;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -300,8 +156,11 @@ with st.sidebar:
 # Main chat area
 st.markdown("""
 <div class="chat-header">
-    <h1>🙏 Narayan Seva Sansthan</h1>
-    <p>AI Sadhak - Your helpful assistant</p>
+    <div class="chat-header-avatar">🙏</div>
+    <div class="chat-header-info">
+        <h1>Narayan Seva Sansthan</h1>
+        <p>AI Sadhak - Your helpful assistant</p>
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -312,55 +171,31 @@ with chat_container:
         st.info("👋 Welcome! Start a conversation by typing a message below.")
     
     for message in st.session_state.messages:
-        role = message["role"]
-        content = message["content"]
-        timestamp = message.get("timestamp", datetime.now().strftime("%I:%M %p"))
-        classification = message.get("classification", "")
-        sub_classification = message.get("sub_classification", "")
-        confidence = message.get("confidence", "")
-        has_image = message.get("has_image", False)
-        image_url = message.get("image_url", "")
-        
-        if role == "user":
-            # Start user message bubble
-            st.markdown('<div class="message-container user-message"><div class="message-bubble user-bubble">', unsafe_allow_html=True)
-            
-            # Display image if present
+        with st.chat_message(message["role"]):
+            content = message["content"]
+            timestamp = message.get("timestamp", datetime.now().strftime("%I:%M %p"))
+            has_image = message.get("has_image", False)
+            image_url = message.get("image_url", "")
+
             if has_image and image_url:
-                st.markdown(f'<img src="{image_url}" class="message-image" />', unsafe_allow_html=True)
+                st.image(image_url, caption="User Image", width=200)
             
-            # Display message text using st.write (safe from HTML injection)
-            st.markdown(f'<div class="message-text">', unsafe_allow_html=True)
-            st.write(content)
-            st.markdown('</div>', unsafe_allow_html=True)
-            
-            # Display timestamp
-            st.markdown(f'<div class="message-time">{timestamp}</div>', unsafe_allow_html=True)
-            
-            # End user message bubble
-            st.markdown('</div></div>', unsafe_allow_html=True)
-        else:
-            # Start bot message bubble
-            st.markdown('<div class="message-container bot-message"><div class="message-bubble bot-bubble">', unsafe_allow_html=True)
-            
-            # Display message text using st.write (safe from HTML injection)
-            st.markdown(f'<div class="message-text">', unsafe_allow_html=True)
-            st.write(content)
-            st.markdown('</div>', unsafe_allow_html=True)
-            
-            # Display timestamp
-            st.markdown(f'<div class="message-time">{timestamp}</div>', unsafe_allow_html=True)
-            
-            # Display classification details
-            if classification:
-                st.markdown(f'<div class="classification-details"><span class="classification-label">📋 Classification:</span>{classification}</div>', unsafe_allow_html=True)
-            if sub_classification:
-                st.markdown(f'<div class="classification-details"><span class="classification-label">📌 Sub-Classification:</span>{sub_classification}</div>', unsafe_allow_html=True)
-            if confidence:
-                st.markdown(f'<div class="classification-details"><span class="classification-label">✅ Confidence:</span>{confidence}</div>', unsafe_allow_html=True)
-            
-            # End bot message bubble
-            st.markdown('</div></div>', unsafe_allow_html=True)
+            st.markdown(content)
+            st.caption(timestamp)
+
+            if message["role"] == "assistant":
+                classification = message.get("classification", "")
+                sub_classification = message.get("sub_classification", "")
+                confidence = message.get("confidence", "")
+                
+                if classification:
+                    st.markdown(f'<div style="font-size: 0.85em; color: #555; margin-top: 8px;">📋 <strong>Classification:</strong> {classification}</div>', unsafe_allow_html=True)
+                if sub_classification:
+                    st.markdown(f'<div style="font-size: 0.85em; color: #555; margin-top: 4px;">📌 <strong>Sub-Classification:</strong> {sub_classification}</div>', unsafe_allow_html=True)
+                if confidence:
+                    st.markdown(f'<div style="font-size: 0.85em; color: #555; margin-top: 4px;">✅ <strong>Confidence:</strong> {confidence}</div>', unsafe_allow_html=True)
+
+
 
 # Function to handle message sending
 def send_message(user_input):
