@@ -126,7 +126,7 @@ with st.sidebar:
     st.markdown('</div>', unsafe_allow_html=True)
     
     # Fixed Backend API URL (hidden from UI)
-    api_url = "https://nss-agent-testing-app.onrender.com/message"
+    api_url = "https://nss-langgraph.onrender.com/message"
 
     # Stats
     st.markdown('<div class="info-box">', unsafe_allow_html=True)
@@ -332,3 +332,4 @@ st.markdown("""
     <p>Powered by Gemini AI | Built with Streamlit</p>
 </div>
 """, unsafe_allow_html=True)
+
