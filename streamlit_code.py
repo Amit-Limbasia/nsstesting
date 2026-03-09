@@ -558,11 +558,11 @@ def send_message(user_input):
     # Prepare message content
     if is_image_url:
         message_content = "[Image]"
-        message_type = "image"
+        message_type = "IMAGE"
         image_url = user_input
     else:
         message_content = user_input
-        message_type = "text"
+        message_type = "TEXT"
         image_url = None
     
     # Add user message
@@ -679,3 +679,4 @@ st.markdown("""
     <p>Powered by Gemini AI | Built with Streamlit</p>
 </div>
 """, unsafe_allow_html=True)
+
