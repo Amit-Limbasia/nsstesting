@@ -461,7 +461,7 @@ with st.sidebar:
     st.markdown('</div>', unsafe_allow_html=True)
     
     # Fixed Backend API URL (hidden from UI)
-    api_url = "https://nss-langgraph.onrender.com/message"
+    api_url = "https://chatbot-code-scaz.onrender.com/message"
 
     # Stats
     st.markdown('<div class="info-box">', unsafe_allow_html=True)
